@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stok Bahan Ajar | Universitas Terbuka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&family=Lexend:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003d79',
+                        'primary-container': '#002b56',
+                        secondary: '#fdb913',
+                        'secondary-container': '#fdb913',
+                        accent: '#fdb913'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Public Sans', 'sans-serif'],
+                        body: ['Inter', 'Lexend', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#f8fafc] dark:bg-slate-950 font-body text-[#181c1e] dark:text-slate-100 min-h-screen transition-colors duration-300">
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar-menu" class="sidebar bg-primary dark:bg-slate-900 shadow-xl z-50 transition-colors duration-300">
+        <div class="p-6 border-b border-blue-900 bg-blue-950/20 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary font-black text-[10px] border-2 border-accent ut-logo-placeholder"></div>
+                <div>
+                    <div class="font-bold text-sm tracking-tight">UT-Daerah</div>
+                    <div class="text-[10px] text-blue-300 font-bold uppercase tracking-widest">Logistik Bahan Ajar</div>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 py-6 px-4 space-y-1">
+            <button onclick="window.location.href='dashboard.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </button>
+            <button onclick="window.location.href='pesanan.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                Pesanan
+            </button>
+            <button id="nav-stok" onclick="window.location.href='stok.html'" class="w-full text-left p-3 bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-bold border-l-4 border-accent">
+                <span class="material-symbols-outlined text-accent text-accent">inventory_2</span>
+                Informasi Stok
+            </button>
+            <button id="nav-tracking" onclick="window.location.href='tracking.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">local_shipping</span>
+                Tracking Pengiriman
+            </button>
+            <button id="nav-laporan" onclick="window.location.href='laporan.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">report_problem</span>
+                Laporan Masalah
+            </button>
+            <button id="nav-histori" onclick="window.location.href='histori.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">history</span>
+                Histori Pengiriman
+            </button>
+        </nav>
+        <div class="p-4 border-t border-blue-900">
+            <button onclick="UT_Utils.logout()" class="w-full p-2 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white transition-all text-xs font-bold rounded flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-sm">logout</span>
+                LOGOUT
+            </button>
+        </div>
+    </aside>
+
+    <div class="main-content flex flex-col min-h-screen">
+        <!-- Header -->
+        <header class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 flex items-center justify-between shadow-sm sticky top-0 z-40 transition-colors">
+            <div class="flex items-center gap-4">
+                <button onclick="document.getElementById('sidebar-menu').classList.toggle('active')" class="md:hidden p-2">
+                    <span class="material-symbols-outlined dark:text-white">menu</span>
+                </button>
+                <div class="text-slate-700 dark:text-white font-bold text-lg font-sans">Informasi Stok Bahan Ajar</div>
+            </div>
+            <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+                <div class="relative">
+                    <button onclick="toggleNotifications()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors relative" title="Notifikasi">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span id="notif-badge" class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900 hidden"></span>
+                    </button>
+                    <!-- Notification Dropdown -->
+                    <div id="notification-box" class="hidden absolute right-0 mt-2 w-72 bg-white dark:bg-slate-800 shadow-2xl border border-slate-100 dark:border-slate-700 rounded-xl z-50 overflow-hidden">
+                        <div class="p-4 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Notifikasi Terbaru</span>
+                            <button onclick="clearNotifications()" class="text-[10px] text-blue-600 font-bold hover:underline">Hapus Semua</button>
+                        </div>
+                        <div id="notification-list" class="max-h-64 overflow-y-auto p-4 text-center text-slate-400">
+                            <span class="material-symbols-outlined text-4xl mb-2">notifications_off</span>
+                            <p class="text-xs">Belum ada notifikasi baru.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors" title="Ganti Tema">
+                    <span id="theme-icon" class="material-symbols-outlined">dark_mode</span>
+                </button>
+
+                <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1 hidden sm:block"></div>
+
+                <div class="flex items-center gap-3 pl-1">
+                    <div id="userInitial" class="w-9 h-9 rounded-full bg-accent text-primary flex items-center justify-center font-black text-sm ring-2 ring-white dark:ring-slate-800 shadow-sm transition-transform hover:scale-105 cursor-pointer">U</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 p-8 space-y-8">
+            <!-- Summary Stats for Admin -->
+            <div id="admin-stock-summary" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card p-6 border-l-4 border-primary dark:bg-slate-900 shadow-sm">
+                    <p class="text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Total Jenis Modul</p>
+                    <h4 id="total-categories" class="text-2xl font-black dark:text-white leading-none">0</h4>
+                </div>
+                <div class="card p-6 border-l-4 border-amber-500 dark:bg-slate-900 shadow-sm">
+                    <p class="text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Stok Menipis (&lt; 50)</p>
+                    <h4 id="low-stock-count" class="text-2xl font-black text-amber-600 leading-none">0</h4>
+                </div>
+                <div class="card p-6 border-l-4 border-emerald-500 dark:bg-slate-900 shadow-sm">
+                    <p class="text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Total Unit Tersedia</p>
+                    <h4 id="total-units" class="text-2xl font-black text-emerald-600 leading-none">0</h4>
+                </div>
+            </div>
+
+            <!-- Add Stock Section (Moved to Top) -->
+            <section id="add-stock-section" class="hidden">
+                <div class="card p-6 dark:bg-slate-900 dark:border-slate-800 transition-colors shadow-lg border-t-4 border-t-primary">
+                    <div class="flex items-center gap-2 mb-6">
+                        <h2 class="text-xs font-black font-sans text-primary dark:text-secondary uppercase tracking-tight">Form Tambah Stok Bahan Ajar Baru</h2>
+                    </div>
+                    
+                    <form id="addStockForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">FOTO PRODUK</label>
+                            <input type="file" id="foto" accept="image/*" class="block w-full text-[10px] text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark cursor-pointer border border-slate-100 dark:border-slate-800 rounded bg-slate-50 dark:bg-slate-800">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">KODE LOKASI</label>
+                            <input type="text" id="newKodeLokasi" placeholder="Contoh: 0TMP01" class="w-full bg-slate-50 dark:bg-slate-800 border-none dark:text-white rounded px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">KODE BARANG</label>
+                            <input type="text" id="newKodeBarang" placeholder="Contoh: MTH4001" class="w-full bg-slate-50 dark:bg-slate-800 border-none dark:text-white rounded px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">NAMA BARANG</label>
+                            <input type="text" id="newNama" placeholder="Contoh: Kalkulus II" class="w-full bg-slate-50 dark:bg-slate-800 border-none dark:text-white rounded px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">JENIS BARANG</label>
+                            <select id="newKategori" class="w-full bg-slate-50 dark:bg-slate-800 border-none dark:text-white rounded px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary">
+                                <option>BMP</option>
+                                <option>BMP PLUS</option>
+                                <option>BA DIGITAL</option>
+                                <option>BAI</option>
+                                <option>KIT PRAKTIK</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest text-nowrap">EDISI</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="newEdisi" placeholder="Edisi" class="w-full bg-slate-50 dark:bg-slate-800 border-none dark:text-white rounded px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary">
+                                <input type="number" id="newStok" placeholder="Stok" class="w-full bg-slate-50 dark:bg-slate-800 border-none dark:text-white rounded px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                        </div>
+                        <div class="md:col-span-2 lg:col-span-3 flex justify-end">
+                            <button type="button" onclick="addNewStock()" class="btn-primary bg-primary text-white font-bold px-8 py-2.5 rounded shadow-lg text-[10px] uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all">
+                                + DAFTARKAN BARANG
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <div class="card overflow-hidden flex flex-col dark:bg-slate-900 dark:border-slate-800 transition-colors shadow-xl">
+                <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center bg-slate-50/50 dark:bg-slate-800/50 gap-4">
+                    <h3 class="text-sm font-bold font-sans text-primary dark:text-secondary uppercase">Daftar Bahan Ajar Terdaftar</h3>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <div class="relative flex-grow">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 text-xs">search</span>
+                            <input type="text" id="stockSearch" oninput="renderStocks()" placeholder="Cari kode atau nama..." class="w-full pl-8 pr-4 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-md text-[10px] outline-none">
+                        </div>
+                        <select id="categoryFilter" onchange="renderStocks()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1 text-[10px] outline-none dark:text-white">
+                            <option value="">Semua Kategori</option>
+                            <option>BMP</option>
+                            <option>BMP PLUS</option>
+                            <option>BA DIGITAL</option>
+                            <option>BAI</option>
+                            <option>KIT PRAKTIK</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex-grow overflow-auto custom-scrollbar h-[500px] bg-white dark:bg-slate-900 border-t dark:border-slate-800 relative z-0">
+                    <table class="w-full text-left text-xs bg-white dark:bg-slate-900">
+                        <thead class="bg-white dark:bg-slate-900 sticky top-0 uppercase text-[9px] font-black tracking-widest text-slate-500 border-b-2 border-slate-100 dark:border-slate-800 z-30 transition-colors shadow-sm">
+                            <tr>
+                                <th class="px-6 py-4">Gambar</th>
+                                <th class="px-6 py-4">Kode Lokasi</th>
+                                <th class="px-6 py-4">Kode Barang</th>
+                                <th class="px-6 py-4">Nama Barang</th>
+                                <th class="px-6 py-4">Edisi</th>
+                                <th class="px-6 py-4 text-center">Stok</th>
+                                <th class="px-6 py-4 text-center">Status</th>
+                                <th id="th-aksi" class="px-6 py-4 text-right hidden">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stockTableBody" class="divide-y divide-slate-50 dark:divide-slate-800">
+                            <!-- Injected -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="p-3 bg-slate-50/80 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 text-center">
+                    <p id="rowCountInfo" class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">TOTAL ITEM: 0</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-sm font-bold text-primary dark:text-secondary uppercase mb-4">Edit Data Stok</h3>
+            <form id="editForm" class="space-y-4">
+                <input type="hidden" id="editOriginalCode">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">UPLOAD FOTO BARU</label>
+                    <input type="file" id="editFoto" onchange="previewEditImage(this)" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark cursor-pointer">
+                    <img id="editFotoPreview" src="" alt="preview" class="mt-2 h-20 w-20 object-cover rounded shadow-md border border-slate-200 hidden">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">KODE LOKASI</label>
+                    <input type="text" id="editKodeLokasi" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 px-3 py-2 text-xs rounded dark:text-white uppercase">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">KODE BARANG</label>
+                    <input type="text" id="editKodeBarang" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 px-3 py-2 text-xs rounded dark:text-white uppercase">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">NAMA BARANG</label>
+                    <input type="text" id="editNama" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 px-3 py-2 text-xs rounded dark:text-white">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">JENIS BARANG</label>
+                    <select id="editKategori" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 px-3 py-2 text-xs rounded dark:text-white">
+                        <option>BMP</option>
+                        <option>BMP PLUS</option>
+                        <option>BA DIGITAL</option>
+                        <option>BAI</option>
+                        <option>KIT PRAKTIK</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">EDISI</label>
+                    <input type="text" id="editEdisi" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 px-3 py-2 text-xs rounded dark:text-white">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">JUMLAH STOK</label>
+                    <input type="number" id="editStok" class="w-full bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 px-3 py-2 text-xs rounded dark:text-white">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="closeEditModal()" class="flex-grow py-2 text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded transition-colors">BATAL</button>
+                    <button type="button" onclick="saveEdit()" class="flex-grow py-2 text-xs font-bold bg-primary text-white rounded shadow-md hover:brightness-110">SIMPAN PERUBAHAN</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] transform transition-all duration-300 translate-y-20 opacity-0 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3">
+        <span class="material-symbols-outlined text-secondary">info</span>
+        <span id="toast-message" class="text-xs font-bold tracking-tight"></span>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        function setupStokUI() {
+            if (UT_Utils.userRole === 'Admin') {
+                document.getElementById('add-stock-section')?.classList.remove('hidden');
+                document.getElementById('th-aksi')?.classList.remove('hidden');
+                document.getElementById('admin-stock-summary')?.classList.remove('hidden');
+            } else {
+                window.location.href = 'dashboard.html';
+            }
+        }
+
+        function getStocks() {
+            try { return JSON.parse(localStorage.getItem('ut_stocks') || '[]'); }
+            catch (e) { return []; }
+        }
+
+        function saveStocks(data) {
+            localStorage.setItem('ut_stocks', JSON.stringify(data));
+        }
+
+        function renderStocks() {
+            const tbody = document.getElementById('stockTableBody');
+            if (!tbody) return;
+            const searchTerm = (document.getElementById('stockSearch').value || '').toLowerCase();
+            const filterCat = document.getElementById('categoryFilter').value;
+            const utStocks = getStocks();
+
+            const filtered = utStocks.filter(item => {
+                const matchSearch = String(item.kodeBarang || '').toLowerCase().includes(searchTerm)
+                    || String(item.name || '').toLowerCase().includes(searchTerm)
+                    || String(item.kodeLokasi || '').toLowerCase().includes(searchTerm);
+                const matchCat = filterCat === '' || item.category === filterCat;
+                return matchSearch && matchCat;
+            });
+
+            tbody.innerHTML = filtered.map(item => {
+                const s = item.stock || 0;
+                const statusColor = s > 100 ? 'text-green-600' : (s > 0 ? 'text-amber-600' : 'text-red-500');
+                const statusBg   = s > 100 ? 'bg-green-50'  : (s > 0 ? 'bg-amber-50'  : 'bg-red-50');
+                const statusLabel = s > 100 ? 'Ready' : (s > 0 ? 'Low' : 'Empty');
+                const imgTag = item.foto
+                    ? `<img src="${item.foto}" class="h-10 w-10 object-cover rounded" alt="foto">`
+                    : `<div class="h-10 w-10 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 text-[9px]">NO IMG</div>`;
+
+                return `
+                    <tr class="bg-white dark:bg-slate-900 border-b dark:border-slate-800">
+                        <td class="px-6 py-4">${imgTag}</td>
+                        <td class="px-6 py-4 font-bold text-slate-500 dark:text-slate-400">${item.kodeLokasi || '-'}</td>
+                        <td class="px-6 py-4 font-bold text-primary dark:text-blue-400">${item.kodeBarang || '-'}</td>
+                        <td class="px-6 py-4">
+                            <div class="font-bold dark:text-white">${item.name}</div>
+                            <div class="text-[9px] text-slate-400 font-bold uppercase">${item.category || ''}</div>
+                        </td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-300">${item.edisi || '-'}</td>
+                        <td class="px-6 py-4 text-center font-black ${statusColor}">${s.toLocaleString()}</td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="px-2 py-1 rounded text-[9px] font-black uppercase ${statusBg}">${statusLabel}</span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="openEditModal('${item.kodeBarang || item.code}')" class="p-1 hover:text-blue-600 dark:text-slate-400 transition-colors">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                            </button>
+                            <button onclick="deleteStock('${item.kodeBarang || item.code}')" class="p-1 hover:text-red-600 dark:text-slate-400 transition-colors">
+                                <span class="material-symbols-outlined text-sm">delete</span>
+                            </button>
+                        </td>
+                    </tr>`;
+            }).join('');
+
+            const setVal = (id, val) => { if(document.getElementById(id)) document.getElementById(id).innerText = val; };
+            setVal('total-categories', utStocks.length);
+            setVal('low-stock-count', utStocks.filter(s => s.stock <= 50).length);
+            setVal('total-units', utStocks.reduce((sum, s) => sum + s.stock, 0).toLocaleString());
+            setVal('rowCountInfo', `TOTAL ITEM: ${filtered.length}`);
+        }
+
+        function addNewStock() {
+            const getV = id => document.getElementById(id).value.trim();
+            const kodeLokasi = getV('newKodeLokasi').toUpperCase();
+            const kodeBarang = getV('newKodeBarang').toUpperCase();
+            const name = getV('newNama');
+            const category = getV('newKategori');
+            const edisi = getV('newEdisi');
+            const stock = parseInt(getV('newStok'));
+
+            if (!kodeBarang || !name || isNaN(stock)) return UT_Utils.showNotification('Lengkapi semua data!');
+            const utStocks = getStocks();
+            if (utStocks.some(s => s.kodeBarang === kodeBarang)) return UT_Utils.showNotification('Kode barang sudah terdaftar!');
+
+            const fotoFile = document.getElementById('foto').files[0];
+            const save = (foto) => {
+                utStocks.unshift({ foto, kodeLokasi, kodeBarang, name, category, edisi, stock, code: kodeBarang });
+                saveStocks(utStocks);
+                renderStocks();
+                document.getElementById('addStockForm').reset();
+                UT_Utils.showNotification('Barang berhasil ditambahkan.');
+            };
+
+            if (fotoFile) {
+                const reader = new FileReader();
+                reader.onload = e => save(e.target.result);
+                reader.readAsDataURL(fotoFile);
+            } else save('');
+        }
+
+        function deleteStock(id) {
+            if (!confirm(`Hapus item ${id}?`)) return;
+            const filtered = getStocks().filter(s => (s.kodeBarang || s.code) !== id);
+            saveStocks(filtered);
+            renderStocks();
+            UT_Utils.showNotification('Item berhasil dihapus.');
+        }
+
+        function openEditModal(id) {
+            const item = getStocks().find(s => String(s.kodeBarang || s.code).trim() === String(id).trim());
+            if (!item) return UT_Utils.showNotification('Data tidak ditemukan!');
+
+            const setV = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+            setV('editOriginalCode', item.kodeBarang || item.code);
+            setV('editKodeBarang', item.kodeBarang || item.code);
+            setV('editNama', item.name);
+            setV('editStok', item.stock);
+            setV('editKodeLokasi', item.kodeLokasi || '');
+            setV('editKategori', item.category || 'BMP');
+            setV('editEdisi', item.edisi || '');
+            
+            const preview = document.getElementById('editFotoPreview');
+            if (item.foto) { preview.src = item.foto; preview.classList.remove('hidden'); }
+            else preview.classList.add('hidden');
+
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function previewEditImage(input) {
+            if (input.files?.[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const p = document.getElementById('editFotoPreview');
+                    p.src = e.target.result; p.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function saveEdit() {
+            const getV = id => document.getElementById(id).value.trim();
+            const originalCode = getV('editOriginalCode');
+            const newCode = getV('editKodeBarang').toUpperCase();
+            const name = getV('editNama');
+            const stock = parseInt(getV('editStok'));
+
+            if (!newCode || !name || isNaN(stock)) return UT_Utils.showNotification('Lengkapi data!');
+            let utStocks = getStocks();
+            
+            if (newCode !== originalCode && utStocks.some(s => (s.kodeBarang || s.code) === newCode)) 
+                return UT_Utils.showNotification('Kode sudah terdaftar!');
+
+            const idx = utStocks.findIndex(s => (s.kodeBarang || s.code) === originalCode);
+            if (idx === -1) return UT_Utils.showNotification('Error: Data tidak ditemukan.');
+
+            const fotoFile = document.getElementById('editFoto').files[0];
+            const update = (f) => {
+                const item = utStocks[idx];
+                Object.assign(item, {
+                    kodeBarang: newCode, code: newCode, name, stock,
+                    kodeLokasi: getV('editKodeLokasi').toUpperCase(),
+                    category: getV('editKategori'),
+                    edisi: getV('editEdisi')
+                });
+                if (f) item.foto = f;
+                saveStocks(utStocks);
+                renderStocks();
+                document.getElementById('editModal').classList.add('hidden');
+                UT_Utils.showNotification('Data diperbarui.');
+            };
+
+            if (fotoFile) {
+                const reader = new FileReader();
+                reader.onload = e => update(e.target.result);
+                reader.readAsDataURL(fotoFile);
+            } else update(null);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setupStokUI();
+            renderStocks();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Masalah - Bahan Ajar UT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003d79',
+                        secondary: '#ffce00',
+                        accent: '#ffce00',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#f8fafc] dark:bg-slate-950 font-body text-[#181c1e] dark:text-slate-100 min-h-screen transition-colors duration-300">
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar-menu" class="sidebar bg-primary dark:bg-slate-900 shadow-xl z-50 transition-colors duration-300">
+        <div class="p-6 border-b border-blue-900 bg-blue-950/20 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary font-black text-[10px] border-2 border-accent ut-logo-placeholder"></div>
+                <div>
+                    <h1 class="font-black text-xs tracking-tighter leading-none text-white">BAHAN AJAR</h1>
+                    <p class="text-[8px] font-bold text-accent tracking-[0.2em]">LOGISTICS SYSTEM</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 py-6 px-4 space-y-1">
+            <button onclick="window.location.href='dashboard.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </button>
+            <button onclick="window.location.href='pesanan.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                Pesanan
+            </button>
+            <button id="nav-stok" onclick="window.location.href='stok.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">inventory_2</span>
+                Informasi Stok
+            </button>
+            <button onclick="window.location.href='tracking.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">local_shipping</span>
+                Tracking Pengiriman
+            </button>
+            <button id="nav-laporan" onclick="window.location.href='laporan.html'" class="w-full text-left p-3 bg-blue-800/40 border-l-4 border-accent rounded-lg flex items-center gap-3 transition-colors text-sm font-bold text-accent">
+                <span class="material-symbols-outlined text-accent">report_problem</span>
+                Laporan Masalah
+            </button>
+            <button id="nav-histori" onclick="window.location.href='histori.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">history</span>
+                Histori Pengiriman
+            </button>
+        </nav>
+        <div class="p-4 border-t border-blue-900">
+            <button onclick="UT_Utils.logout()" class="w-full p-2 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white transition-all text-xs font-bold rounded flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-sm">logout</span> KELUAR
+            </button>
+        </div>
+    </aside>
+
+    <div class="main-content flex flex-col min-h-screen">
+        <header class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 flex items-center justify-between shadow-sm sticky top-0 z-40 transition-colors">
+            <div class="flex items-center gap-4">
+                <button onclick="document.getElementById('sidebar-menu').classList.toggle('active')" class="md:hidden p-2">
+                    <span class="material-symbols-outlined dark:text-white">menu</span>
+                </button>
+                <div class="text-slate-700 dark:text-white font-bold text-lg font-sans">Laporan Masalah</div>
+            </div>
+            <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+                <div class="relative">
+                    <button onclick="toggleNotifications()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors relative" title="Notifikasi">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span id="notif-badge" class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900 hidden"></span>
+                    </button>
+                    <!-- Notification Dropdown -->
+                    <div id="notification-box" class="hidden absolute right-0 mt-2 w-72 bg-white dark:bg-slate-800 shadow-2xl border border-slate-100 dark:border-slate-700 rounded-xl z-50 overflow-hidden">
+                        <div class="p-4 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Notifikasi Terbaru</span>
+                            <button onclick="clearNotifications()" class="text-[10px] text-blue-600 font-bold hover:underline">Hapus Semua</button>
+                        </div>
+                        <div id="notification-list" class="max-h-64 overflow-y-auto p-4 text-center text-slate-400">
+                            <span class="material-symbols-outlined text-4xl mb-2">notifications_off</span>
+                            <p class="text-xs">Belum ada notifikasi baru.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors" title="Ganti Tema">
+                    <span id="theme-icon" class="material-symbols-outlined">dark_mode</span>
+                </button>
+
+                <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1 hidden sm:block"></div>
+
+                <div class="flex items-center gap-3 pl-1">
+                    <div id="userInitial" class="w-9 h-9 rounded-full bg-accent text-primary flex items-center justify-center font-black text-sm ring-2 ring-white dark:ring-slate-800 shadow-sm transition-transform hover:scale-105 cursor-pointer">U</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 p-8">
+            <div id="admin-report-stats" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 hidden">
+                <div class="card p-6 border-l-4 border-red-500 dark:bg-slate-900">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Laporan Aktif (Baru)</p>
+                    <p id="stat-active" class="text-2xl font-black dark:text-white">0</p>
+                </div>
+                <div class="card p-6 border-l-4 border-amber-500 dark:bg-slate-900">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Investigasi</p>
+                    <p id="stat-investigating" class="text-2xl font-black dark:text-white">0</p>
+                </div>
+                <div class="card p-6 border-l-4 border-green-500 dark:bg-slate-900">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Selesai</p>
+                    <p id="stat-resolved" class="text-2xl font-black dark:text-white">0</p>
+                </div>
+            </div>
+
+            <div class="card overflow-hidden dark:bg-slate-900 dark:border-slate-800 transition-colors">
+                <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center bg-slate-50/50 dark:bg-slate-800/50 gap-4">
+                    <h3 class="text-sm font-black text-primary dark:text-accent uppercase">Histori Laporan Masalah</h3>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <div class="relative flex-grow">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 text-xs">search</span>
+                            <input type="text" id="reportSearch" oninput="renderReports()" placeholder="Cari ID atau detail..." class="w-full pl-8 pr-4 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white rounded-md text-[10px] outline-none">
+                        </div>
+                        <select id="reportStatusFilter" onchange="renderReports()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1 text-[10px] outline-none dark:text-white">
+                            <option value="">Semua Status</option>
+                            <option>New</option>
+                            <option>Investigating</option>
+                            <option>Resolved</option>
+                        </select>
+                        <button onclick="window.location.href='dashboard.html'" id="btn-add-report" class="hidden px-4 py-2 bg-red-600 text-white text-[10px] font-black uppercase rounded shadow-lg shadow-red-200">TAMBAH</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 dark:bg-slate-800/30 font-bold text-slate-400 border-b dark:border-slate-800 uppercase text-[9px] tracking-widest">
+                            <tr>
+                                <th class="px-6 py-4">ID</th>
+                                <th class="px-6 py-4">DO</th>
+                                <th class="px-6 py-4">INFO MASALAH</th>
+                                <th id="th-pelapor" class="px-6 py-4">PELAPOR</th>
+                                <th class="px-6 py-4">STATUS</th>
+                                <th id="th-aksi" class="px-6 py-4 text-right">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody" class="divide-y divide-slate-50 dark:divide-slate-800">
+                            <!-- Injected -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Report Modal -->
+    <div id="report-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+            <div class="p-6 border-b dark:border-slate-800 flex justify-between items-center bg-red-50/50 dark:bg-red-900/10">
+                <h3 class="font-black text-red-600 flex items-center gap-2 text-sm">
+                    <span class="material-symbols-outlined">report_problem</span>
+                    FORM LAPORAN KENDALA
+                </h3>
+                <button onclick="closeReportModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="reportForm" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-tighter">Pilih Masalah</label>
+                    <select id="reportCategory" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-xs font-bold dark:text-white" required>
+                        <option value="Modul Kurang/Salah">Modul Kurang atau Salah</option>
+                        <option value="Modul Rusak/Basah">Modul Rusak atau Basah</option>
+                        <option value="Keterlambatan Pengiriman">Keterlambatan Pengiriman (>7 hari)</option>
+                        <option value="Status Terkirim Tapi Belum Diterima">Status 'Selesai' Tapi Belum Diterima</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-tighter">Nomor DO (Opsional)</label>
+                    <input type="text" id="reportDO" placeholder="Contoh: DO-123456" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-xs font-bold dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-tighter">Detail Kejadian</label>
+                    <textarea id="reportDetail" rows="3" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-xs font-bold dark:text-white" placeholder="Jelaskan kendala Anda..." required></textarea>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeReportModal()" class="flex-1 px-4 py-3 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all">Batal</button>
+                    <button type="submit" class="flex-2 px-4 py-3 bg-red-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-200 dark:shadow-none hover:bg-red-700 transition-all">Kirim Laporan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Status Update Modal -->
+    <div id="status-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-xs shadow-2xl p-6">
+            <h3 class="font-bold text-sm mb-4 dark:text-white uppercase tracking-wider">Update Status Laporan</h3>
+            <input type="hidden" id="status-report-id">
+            <div class="space-y-2">
+                <button onclick="setReportStatus('New')" class="w-full text-left p-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 font-bold text-xs uppercase transition-colors">NEW</button>
+                <button onclick="setReportStatus('Investigating')" class="w-full text-left p-3 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20 text-amber-600 font-bold text-xs uppercase transition-colors">INVESTIGATING</button>
+                <button onclick="setReportStatus('Resolved')" class="w-full text-left p-3 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 text-green-600 font-bold text-xs uppercase transition-colors">RESOLVED</button>
+            </div>
+            <button onclick="closeStatusModal()" class="w-full mt-4 p-2 text-[10px] font-bold text-slate-400 uppercase">Batal</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] transform transition-all duration-300 translate-y-20 opacity-0 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3">
+        <span class="material-symbols-outlined text-accent">info</span>
+        <span id="toast-message" class="text-xs font-bold tracking-tight"></span>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        function setupLaporanUI() {
+            if (UT_Utils.userRole === 'Admin') {
+                document.getElementById('admin-report-stats')?.classList.remove('hidden');
+            } else {
+                const btnAdd = document.getElementById('btn-add-report');
+                if (btnAdd) { btnAdd.classList.remove('hidden'); btnAdd.onclick = openReportModal; }
+                document.getElementById('th-pelapor')?.classList.add('hidden');
+                document.getElementById('th-aksi')?.classList.add('hidden');
+            }
+        }
+
+        function renderReports() {
+            const utReports = JSON.parse(localStorage.getItem('ut_reports') || '[]');
+            const tbody = document.getElementById('reportTableBody');
+            const search = (document.getElementById('reportSearch').value || '').toLowerCase();
+            const filterStat = document.getElementById('reportStatusFilter').value;
+            if(!tbody) return;
+
+            let filtered = utReports.filter(r => {
+                const matchesUser = UT_Utils.userRole === 'Admin' || String(r.studentName).toLowerCase() === String(UT_Utils.userName).toLowerCase();
+                const matchesSearch = r.id.toLowerCase().includes(search) || (r.description || '').toLowerCase().includes(search) || (r.doNum || '').toLowerCase().includes(search);
+                const matchesStat = filterStat === "" || r.status === filterStat;
+                return matchesUser && matchesSearch && matchesStat;
+            });
+
+            tbody.innerHTML = filtered.length ? filtered.map(report => {
+                const statusColor = report.status === 'Resolved' ? 'bg-green-100 text-green-700' : (report.status === 'Investigating' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700');
+                const aksiHtml = UT_Utils.userRole === 'Admin' ? `
+                    <td class="px-6 py-4 text-right flex justify-end gap-3">
+                        <button onclick="updateReportStatus('${report.id}')" class="p-1 hover:bg-slate-100 rounded text-primary dark:text-accent transition-all"><span class="material-symbols-outlined text-sm">fact_check</span></button>
+                        <button onclick="deleteReport('${report.id}')" class="p-1 hover:bg-red-50 rounded text-red-500 transition-all"><span class="material-symbols-outlined text-sm">delete</span></button>
+                    </td>` : '';
+                return `
+                    <tr class="hover:bg-slate-50 border-b dark:border-slate-800 transition-colors">
+                        <td class="px-6 py-4 font-mono font-bold text-red-500">${report.id}</td>
+                        <td class="px-6 py-4 font-bold dark:text-blue-400 text-[10px] text-slate-500">${report.doNum || '-'}</td>
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-xs text-slate-700 dark:text-slate-200">${report.category}</div>
+                            <div class="text-[10px] text-slate-400 max-w-xs truncate">${report.description || ''}</div>
+                        </td>
+                        <td class="px-6 py-4 font-medium dark:text-slate-400 ${UT_Utils.userRole !== 'Admin' ? 'hidden' : ''}">${report.studentName}</td>
+                        <td class="px-6 py-4"><span class="px-2 py-0.5 ${statusColor} rounded text-[9px] font-black uppercase tracking-widest">${report.status}</span></td>
+                        ${aksiHtml}
+                    </tr>`;
+            }).join('') : `<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400 uppercase text-[9px] font-bold tracking-widest">Tidak ada laporan ditemukan</td></tr>`;
+
+            if (UT_Utils.userRole === 'Admin') {
+                const count = s => utReports.filter(r => r.status === s).length;
+                const setVal = (id, val) => { if (document.getElementById(id)) document.getElementById(id).innerText = val; };
+                setVal('stat-active', count('New'));
+                setVal('stat-investigating', count('Investigating'));
+                setVal('stat-resolved', count('Resolved'));
+            }
+        }
+
+        function openReportModal() {
+            const modal = document.getElementById('report-modal');
+            if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        }
+
+        function closeReportModal() {
+            const modal = document.getElementById('report-modal');
+            if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        }
+
+        function updateReportStatus(id) {
+            const modal = document.getElementById('status-modal');
+            const hiddenId = document.getElementById('status-report-id');
+            if (hiddenId) hiddenId.value = id;
+            if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        }
+
+        function setReportStatus(status) {
+            const id = document.getElementById('status-report-id').value;
+            let reports = JSON.parse(localStorage.getItem('ut_reports') || '[]');
+            const idx = reports.findIndex(r => r.id === id);
+            if(idx !== -1) {
+                reports[idx].status = status;
+                localStorage.setItem('ut_reports', JSON.stringify(reports));
+                UT_Utils.showNotification(`Status diperbarui ke ${status}`);
+                closeStatusModal();
+                renderReports();
+            }
+        }
+
+        function closeStatusModal() {
+            const modal = document.getElementById('status-modal');
+            if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        }
+
+        function deleteReport(id) {
+            if(!confirm(`Hapus laporan ${id}?`)) return;
+            const filtered = JSON.parse(localStorage.getItem('ut_reports') || '[]').filter(r => r.id !== id);
+            localStorage.setItem('ut_reports', JSON.stringify(filtered));
+            UT_Utils.showNotification('Laporan dihapus.');
+            renderReports();
+        }
+
+        document.getElementById('reportForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const utReports = JSON.parse(localStorage.getItem('ut_reports') || '[]');
+            const newReport = {
+                id: `REP-${Math.floor(Math.random() * 9000 + 1000)}`,
+                doNum: document.getElementById('reportDO').value || '-',
+                category: document.getElementById('reportCategory').value,
+                description: document.getElementById('reportDetail').value,
+                date: new Date().toISOString(),
+                status: 'New',
+                studentName: UT_Utils.userName
+            };
+            utReports.unshift(newReport);
+            localStorage.setItem('ut_reports', JSON.stringify(utReports));
+            UT_Utils.showNotification('Laporan terkirim.');
+            closeReportModal();
+            this.reset();
+            renderReports();
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setupLaporanUI();
+            renderReports();
+        });
+    </script>
+</body>
+</html>

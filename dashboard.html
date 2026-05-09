@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Universitas Terbuka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&family=Lexend:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003d79',
+                        'primary-container': '#002b56',
+                        secondary: '#fdb913',
+                        'secondary-container': '#fdb913',
+                        accent: '#fdb913'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Public Sans', 'sans-serif'],
+                        body: ['Inter', 'Lexend', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#f8fafc] dark:bg-slate-950 font-body text-[#181c1e] dark:text-slate-100 min-h-screen transition-colors duration-300">
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar-menu" class="sidebar bg-primary dark:bg-slate-900 shadow-xl z-50 transition-colors duration-300">
+        <div class="p-6 border-b border-blue-900 bg-blue-950/20 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary font-black text-[10px] border-2 border-accent ut-logo-placeholder"></div>
+                <div>
+                    <div class="font-bold text-sm tracking-tight">UT-Daerah</div>
+                    <div class="text-[10px] text-blue-300 font-bold uppercase tracking-widest">Logistik Bahan Ajar</div>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 py-6 px-4 space-y-1">
+            <button onclick="window.location.href='dashboard.html'" class="w-full text-left p-3 bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-bold border-l-4 border-accent">
+                <span class="material-symbols-outlined text-accent">dashboard</span>
+                Dashboard
+            </button>
+            <button onclick="window.location.href='pesanan.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                Pesanan
+            </button>
+            <button id="nav-stok" onclick="window.location.href='stok.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">inventory_2</span>
+                Informasi Stok
+            </button>
+            <button id="nav-tracking" onclick="window.location.href='tracking.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">local_shipping</span>
+                Tracking Pengiriman
+            </button>
+            <button id="nav-laporan" onclick="window.location.href='laporan.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">report_problem</span>
+                Laporan Masalah
+            </button>
+            <button id="nav-histori" onclick="window.location.href='histori.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">history</span>
+                Histori Pengiriman
+            </button>
+        </nav>
+        <div class="p-4 border-t border-blue-900">
+            <button onclick="UT_Utils.logout()" class="w-full p-2 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white transition-all text-[10px] font-bold rounded uppercase tracking-widest flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-sm">logout</span>
+                LOGOUT
+            </button>
+        </div>
+    </aside>
+
+    <div class="main-content flex flex-col min-h-screen">
+        <!-- Header -->
+        <header class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 flex items-center justify-between shadow-sm sticky top-0 z-40 transition-colors">
+            <button onclick="document.getElementById('sidebar-menu').classList.toggle('active')" class="md:hidden p-2 -ml-4">
+                <span class="material-symbols-outlined dark:text-white">menu</span>
+            </button>
+            <div class="text-slate-700 dark:text-slate-300 font-bold text-lg flex items-center gap-4">
+                <span id="greetingText">Selamat Pagi</span>
+            </div>
+            <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+                <div class="relative">
+                    <button onclick="toggleNotifications()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors relative" title="Notifikasi">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span id="notif-badge" class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900 hidden"></span>
+                    </button>
+                    <!-- Notification Dropdown -->
+                    <div id="notification-box" class="hidden absolute right-0 mt-2 w-72 bg-white dark:bg-slate-800 shadow-2xl border border-slate-100 dark:border-slate-700 rounded-xl z-50 overflow-hidden">
+                        <div class="p-4 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Notifikasi Terbaru</span>
+                            <button onclick="clearNotifications()" class="text-[10px] text-blue-600 font-bold hover:underline">Hapus Semua</button>
+                        </div>
+                        <div id="notification-list" class="max-h-64 overflow-y-auto">
+                            <div class="p-8 text-center text-slate-400">
+                                <span class="material-symbols-outlined text-slate-200 dark:text-slate-700 text-4xl mb-2">notifications_off</span>
+                                <p class="text-xs">Belum ada notifikasi baru untuk Anda.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors" title="Ganti Tema">
+                    <span id="theme-icon" class="material-symbols-outlined">dark_mode</span>
+                </button>
+
+                <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1 hidden sm:block"></div>
+
+                <div class="flex items-center gap-3 pl-1">
+                    <div class="hidden sm:flex flex-col items-end">
+                        <span id="userNameDisplay" class="text-xs font-bold dark:text-white">User</span>
+                        <span id="userRoleBadge" class="text-[9px] font-black uppercase tracking-tighter text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-1.5 py-0.5 rounded">Role</span>
+                    </div>
+                    <div id="userInitial" class="w-9 h-9 rounded-full bg-accent text-primary flex items-center justify-center font-black text-sm ring-2 ring-white dark:ring-slate-800 shadow-sm transition-transform hover:scale-105 cursor-pointer">U</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 p-4 sm:p-8">
+            <!-- Operational Date Bar (Full Width) -->
+            <div id="date-card" class="bento-card p-6 mb-6 flex flex-col sm:flex-row justify-center sm:justify-between items-center text-center sm:text-left bg-white dark:bg-slate-900 border-l-4 border-accent transition-colors w-full">
+                <div class="flex flex-col sm:flex-row items-center gap-4">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] dark:text-slate-500">OPERATIONAL DATE</div>
+                    <div id="currentDate" class="text-xl font-bold text-primary dark:text-secondary">Senin, 27 April 2026</div>
+                </div>
+                <div class="mt-4 sm:mt-0 flex gap-2">
+                    <span class="px-2 py-1 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded text-[10px] font-bold">SYSTEM ACTIVE</span>
+                    <span class="px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded text-[10px] font-bold">STABLE</span>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div id="stats-grid" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bento-card p-4 border-l-4 border-primary dark:bg-slate-900 transition-all hover:shadow-md">
+                    <div class="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-black mb-1">Total Delivery Orders</div>
+                    <div id="stat-total-orders" class="text-2xl font-black text-slate-800 dark:text-white">0</div>
+                </div>
+                <div class="bento-card p-4 border-l-4 border-amber-500 dark:bg-slate-900 transition-all hover:shadow-md">
+                    <div class="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-black mb-1">Menunggu Persetujuan</div>
+                    <div id="stat-pending-orders" class="text-2xl font-black text-slate-800 dark:text-white">0</div>
+                </div>
+                <div class="bento-card p-4 border-l-4 border-emerald-500 dark:bg-slate-900 transition-all hover:shadow-md">
+                    <div class="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-black mb-1">Dalam Pengiriman</div>
+                    <div id="stat-shipping-orders" class="text-2xl font-black text-slate-800 dark:text-white">0</div>
+                </div>
+                <div class="bento-card p-4 border-l-4 border-red-500 dark:bg-slate-900 transition-all hover:shadow-md">
+                    <div class="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-black mb-1">Laporan Kendala</div>
+                    <div id="stat-reports" class="text-2xl font-black text-slate-800 dark:text-white">0</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions for Student -->
+            <div id="student-actions" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <button onclick="window.location.href='pesanan.html'" class="bento-card p-6 flex items-center justify-between group hover:border-primary transition-all text-left bg-white dark:bg-slate-900">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-900/30 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-2xl">add_shopping_cart</span>
+                        </div>
+                        <div>
+                            <div class="font-black text-slate-800 dark:text-white">Buat Pesanan Baru</div>
+                            <p class="text-[10px] text-slate-500 uppercase tracking-tighter">Pesan bahan ajar sekarang</p>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">chevron_right</span>
+                </button>
+                <button onclick="openReportModal()" class="bento-card p-6 flex items-center justify-between group hover:border-red-500 transition-all text-left bg-white dark:bg-slate-900">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-red-100 dark:bg-red-900/30 text-red-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-2xl">report_problem</span>
+                        </div>
+                        <div>
+                            <div class="font-black text-slate-800 dark:text-white">Lapor Kendala</div>
+                            <p class="text-[10px] text-slate-500 uppercase tracking-tighter">Komplain pengiriman rusak/lambat</p>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-slate-300 group-hover:text-red-500 transition-colors">chevron_right</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Main Action Card -->
+                <div id="stock-card" onclick="window.location.href='stok.html'" class="lg:col-span-3 bento-card p-8 bg-gradient-to-br from-primary to-primary-container text-white cursor-pointer group border-none">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="p-4 bg-white/10 rounded-xl backdrop-blur-sm border border-white/10">
+                            <span class="material-symbols-outlined text-white text-3xl">menu_book</span>
+                        </div>
+                        <span class="w-10 h-10 rounded-full bg-accent text-primary flex items-center justify-center transition-transform group-hover:rotate-45">
+                            <span class="material-symbols-outlined">arrow_outward</span>
+                        </span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Informasi Bahan Ajar</h3>
+                    <p class="text-blue-100/70 text-sm max-w-md">Katalog lengkap, ketersediaan stok di gudang pusat, dan detail spesifikasi modul akademik terbaru.</p>
+                </div>
+
+                <!-- Histori Table -->
+                <div class="lg:col-span-3 bento-card p-0 overflow-hidden dark:bg-slate-900 dark:border-slate-800 transition-colors">
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
+                        <h3 class="font-bold text-primary dark:text-secondary flex items-center gap-2">
+                            <span class="material-symbols-outlined text-accent">history</span>
+                            Histori Transaksi Terakhir
+                        </h3>
+                        <button class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">Lihat Semua</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 border-b dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/30">
+                                <tr>
+                                    <th class="p-6">ID TRANSAKSI</th>
+                                    <th class="p-6">TANGGAL</th>
+                                    <th class="p-6">KODE BAHAN</th>
+                                    <th class="p-6">STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-slate-600 dark:text-slate-300">
+                                <tr class="border-b border-slate-50 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                    <td class="p-6 font-mono font-bold text-primary dark:text-blue-400">TRX-9921</td>
+                                    <td class="p-6">12/05/2023</td>
+                                    <td class="p-6">ASIP4312</td>
+                                    <td class="p-6"><span class="px-2 py-1 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded text-[10px] font-bold uppercase">Success</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-50 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                    <td class="p-6 font-mono font-bold text-primary dark:text-blue-400">TRX-9918</td>
+                                    <td class="p-6">12/05/2023</td>
+                                    <td class="p-6">SKOM4322</td>
+                                    <td class="p-6"><span class="px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded text-[10px] font-bold uppercase">Shipping</span></td>
+                                </tr>
+                                <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                    <td class="p-6 font-mono font-bold text-primary dark:text-blue-400">TRX-9915</td>
+                                    <td class="p-6">11/05/2023</td>
+                                    <td class="p-6">EKMA4111</td>
+                                    <td class="p-6"><span class="px-2 py-1 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded text-[10px] font-bold uppercase">Success</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Report Modal -->
+    <div id="report-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="p-6 border-b dark:border-slate-800 flex justify-between items-center bg-red-50/50 dark:bg-red-900/10">
+                <h3 class="font-black text-red-600 flex items-center gap-2">
+                    <span class="material-symbols-outlined">report_problem</span>
+                    FORM LAPORAN KENDALA
+                </h3>
+                <button onclick="closeReportModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="reportForm" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Pilih Masalah</label>
+                    <select id="reportCategory" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-xs font-bold dark:text-white" required>
+                        <option value="Modul Kurang/Salah">Modul Kurang atau Salah</option>
+                        <option value="Modul Rusak/Basah">Modul Rusak atau Basah</option>
+                        <option value="Keterlambatan Pengiriman">Keterlambatan Pengiriman (>7 hari)</option>
+                        <option value="Status Terkirim Tapi Belum Diterima">Status 'Selesai' Tapi Belum Diterima</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Nomor DO</label>
+                    <input type="text" id="reportDO" placeholder="Contoh: DO-123456" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-xs font-bold dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Detail Kejadian</label>
+                    <textarea id="reportDetail" rows="3" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-3 text-xs font-bold dark:text-white" placeholder="Jelaskan kendala Anda secara detail..." required></textarea>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeReportModal()" class="flex-1 px-4 py-3 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-200 transition-all">Batal</button>
+                    <button type="submit" class="flex-2 px-4 py-3 bg-red-600 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-red-200 dark:shadow-none hover:bg-red-700 transition-all">Kirim Laporan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] transform transition-all duration-300 translate-y-20 opacity-0 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3">
+        <span class="material-symbols-outlined text-secondary">info</span>
+        <span id="toast-message" class="text-xs font-bold tracking-tight"></span>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Search DO Feature
+        function searchDO() {
+            const doNum = document.getElementById('searchDOInput')?.value?.trim();
+            if (!doNum) return UT_Utils.showNotification('Masukkan Nomor Delivery Order!');
+            
+            const orders = JSON.parse(localStorage.getItem('ut_orders') || '[]');
+            const order = orders.find(o => o.doNum.toLowerCase() === doNum.toLowerCase());
+            
+            if (order) {
+                window.location.href = `tracking.html?do=${order.doNum}`;
+            } else {
+                UT_Utils.showNotification('Nomor DO tidak ditemukan.');
+            }
+        }
+
+        // Role-Based Logic & Data Initialization
+        function setupDashboard() {
+            if (UT_Utils.userRole !== 'Admin') {
+                // Hide stock card for students
+                document.getElementById('stock-card')?.classList.add('hidden');
+                
+                // Show Interactive Actions for Student
+                const studentActions = document.getElementById('student-actions');
+                if(studentActions) {
+                    studentActions.classList.remove('hidden');
+                    studentActions.classList.add('grid');
+                }
+                
+                // Update table header
+                const tableTitle = document.querySelector('.lg\\:col-span-3 h3');
+                if(tableTitle) tableTitle.innerHTML = '<span class="material-symbols-outlined text-accent">history</span> Histori Pesanan Saya';
+            } else {
+                // Show Admin Stats
+                const adminStats = document.getElementById('stats-grid');
+                if(adminStats) {
+                    adminStats.classList.remove('hidden');
+                    adminStats.classList.add('grid');
+                }
+            }
+        }
+
+        function refreshDashboardStats() {
+            const orders = JSON.parse(localStorage.getItem('ut_orders') || '[]');
+            const reports = JSON.parse(localStorage.getItem('ut_reports') || '[]');
+
+            const totalOrders = orders.length; 
+            const pendingOrders = orders.filter(o => o.status === 'Pending Approval').length;
+            const inShipping = orders.filter(o => o.status === 'In Transit').length;
+            const totalReports = reports.length;
+
+            const setVal = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
+
+            setVal('stat-total-orders', totalOrders.toLocaleString());
+            setVal('stat-pending-orders', pendingOrders);
+            setVal('stat-shipping-orders', inShipping);
+            setVal('stat-reports', totalReports);
+            
+            renderRecentOrders();
+        }
+
+        function openReportModal() {
+            const modal = document.getElementById('report-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeReportModal() {
+            const modal = document.getElementById('report-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        document.getElementById('reportForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const utReports = JSON.parse(localStorage.getItem('ut_reports') || '[]');
+            const newReport = {
+                id: `REP-${Math.floor(Math.random() * 9000 + 1000)}`,
+                doNum: document.getElementById('reportDO').value || '-',
+                category: document.getElementById('reportCategory').value,
+                description: document.getElementById('reportDetail').value,
+                date: new Date().toISOString(),
+                status: 'New',
+                studentName: UT_Utils.userName
+            };
+            
+            utReports.unshift(newReport);
+            localStorage.setItem('ut_reports', JSON.stringify(utReports));
+            
+            UT_Utils.showNotification('Laporan masalah Anda telah terkirim.');
+            closeReportModal();
+            this.reset();
+            refreshDashboardStats();
+        });
+
+        function renderRecentOrders() {
+            const orders = JSON.parse(localStorage.getItem('ut_orders') || '[]');
+            const tbody = document.querySelector('table tbody');
+            if(!tbody) return;
+
+            let displayOrders = [...orders];
+            if (UT_Utils.userRole !== 'Admin') {
+                displayOrders = displayOrders.filter(o => o.studentName === UT_Utils.userName);
+            }
+
+            const latest = displayOrders.reverse().slice(0, 5);
+            
+            if (latest.length > 0) {
+                tbody.innerHTML = '';
+                latest.forEach(order => {
+                    const statusClass = {
+                        'Pending Approval': 'bg-amber-50 text-amber-700',
+                        'Confirmed': 'bg-blue-50 text-blue-700',
+                        'In Transit': 'bg-indigo-50 text-indigo-700',
+                        'Delivered': 'bg-green-50 text-green-700',
+                        'Finished': 'bg-slate-50 text-slate-700',
+                        'Rejected': 'bg-red-50 text-red-700'
+                    }[order.status] || 'bg-slate-50 text-slate-500';
+                    
+                    tbody.innerHTML += `
+                        <tr class="border-b border-slate-50 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                            <td class="p-4 sm:p-6 font-mono font-bold text-primary dark:text-blue-400 text-[10px] sm:text-xs">${order.doNum}</td>
+                            <td class="p-4 sm:p-6 text-[10px] sm:text-xs text-slate-500">${new Date(order.date).toLocaleDateString('id-ID')}</td>
+                            <td class="p-4 sm:p-6 text-[10px] sm:text-xs dark:text-slate-400 font-bold uppercase">${order.moduleCode}</td>
+                            <td class="p-4 sm:p-6"><span class="px-2 py-0.5 ${statusClass} rounded text-[9px] font-black uppercase tracking-tighter">${order.status}</span></td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-slate-400 italic font-medium uppercase text-[10px] tracking-widest">Belum ada aktivitas pesanan.</td></tr>';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            UT_Utils.updateGreeting();
+            UT_Utils.updateOperationalDate();
+            setupDashboard();
+            refreshDashboardStats();
+        });
+    </script>
+</body>
+</html>

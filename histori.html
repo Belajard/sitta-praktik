@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histori - Bahan Ajar UT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#003d79',
+                        secondary: '#ffce00',
+                        accent: '#ffce00',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#f8fafc] dark:bg-slate-950 font-body text-[#181c1e] dark:text-slate-100 min-h-screen transition-colors duration-300">
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar-menu" class="sidebar bg-primary dark:bg-slate-900 shadow-xl z-50 transition-colors duration-300">
+        <div class="p-6 border-b border-blue-900 bg-blue-950/20 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary font-black text-[10px] border-2 border-accent ut-logo-placeholder"></div>
+                <div>
+                    <h1 class="font-black text-xs tracking-tighter leading-none text-white">BAHAN AJAR</h1>
+                    <p class="text-[8px] font-bold text-accent tracking-[0.2em]">LOGISTICS SYSTEM</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 py-6 px-4 space-y-1">
+            <button onclick="window.location.href='dashboard.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </button>
+            <button onclick="window.location.href='pesanan.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                Pesanan
+            </button>
+            <button id="nav-stok" onclick="window.location.href='stok.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">inventory_2</span>
+                Informasi Stok
+            </button>
+            <button onclick="window.location.href='tracking.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">local_shipping</span>
+                Tracking Pengiriman
+            </button>
+            <button id="nav-laporan" onclick="window.location.href='laporan.html'" class="w-full text-left p-3 hover:bg-blue-800/40 rounded-lg flex items-center gap-3 transition-colors text-sm font-medium opacity-80 hover:opacity-100">
+                <span class="material-symbols-outlined">report_problem</span>
+                Laporan Masalah
+            </button>
+            <button id="nav-histori" onclick="window.location.href='histori.html'" class="w-full text-left p-3 bg-blue-800/40 border-l-4 border-accent rounded-lg flex items-center gap-3 transition-colors text-sm font-bold text-accent">
+                <span class="material-symbols-outlined text-accent text-accent">history</span>
+                Histori Pengiriman
+            </button>
+        </nav>
+        <nav class="p-4 border-t border-blue-900">
+            <button onclick="UT_Utils.logout()" class="w-full p-2 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white transition-all text-xs font-bold rounded flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-sm">logout</span> KELUAR
+            </button>
+        </nav>
+    </aside>
+
+    <div class="main-content flex flex-col min-h-screen">
+        <header class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 flex items-center justify-between shadow-sm sticky top-0 z-40 transition-colors">
+            <div class="flex items-center gap-4">
+                <button onclick="document.getElementById('sidebar-menu').classList.toggle('active')" class="md:hidden p-2">
+                    <span class="material-symbols-outlined dark:text-white">menu</span>
+                </button>
+                <div class="text-slate-700 dark:text-white font-bold text-lg font-sans">Histori Pengiriman</div>
+            </div>
+            <div class="flex items-center gap-2 sm:gap-4 ml-auto">
+                <div class="relative">
+                    <button onclick="toggleNotifications()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors relative" title="Notifikasi">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span id="notif-badge" class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900 hidden"></span>
+                    </button>
+                    <!-- Notification Dropdown -->
+                    <div id="notification-box" class="hidden absolute right-0 mt-2 w-72 bg-white dark:bg-slate-800 shadow-2xl border border-slate-100 dark:border-slate-700 rounded-xl z-50 overflow-hidden">
+                        <div class="p-4 border-b border-slate-50 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Notifikasi Terbaru</span>
+                            <button onclick="clearNotifications()" class="text-[10px] text-blue-600 font-bold hover:underline">Hapus Semua</button>
+                        </div>
+                        <div id="notification-list" class="max-h-64 overflow-y-auto p-4 text-center text-slate-400">
+                            <span class="material-symbols-outlined text-4xl mb-2">notifications_off</span>
+                            <p class="text-xs">Belum ada notifikasi baru.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors" title="Ganti Tema">
+                    <span id="theme-icon" class="material-symbols-outlined">dark_mode</span>
+                </button>
+
+                <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 mx-1 hidden sm:block"></div>
+
+                <div class="flex items-center gap-3 pl-1">
+                    <div id="userInitial" class="w-9 h-9 rounded-full bg-accent text-primary flex items-center justify-center font-black text-sm ring-2 ring-white dark:ring-slate-800 shadow-sm transition-transform hover:scale-105 cursor-pointer">U</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 p-8">
+            <div class="card p-6 mb-8 dark:bg-slate-900 dark:border-slate-800">
+                <div class="flex flex-wrap items-end gap-4">
+                    <div class="space-y-1 flex-grow sm:flex-grow-0">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Cari Pesanan</label>
+                        <input type="text" id="histSearch" oninput="renderHistory()" placeholder="Cari No. DO atau Nama..." class="block w-full sm:w-64 bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 rounded-md px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Status</label>
+                        <select id="histStatusFilter" onchange="renderHistory()" class="block w-40 bg-slate-50 dark:bg-slate-800 border dark:border-slate-700 rounded-md px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary dark:text-white">
+                            <option value="">Semua Status</option>
+                            <option>Confirmed</option>
+                            <option>In Transit</option>
+                            <option>Delivered</option>
+                            <option>Finished</option>
+                            <option>Rejected</option>
+                        </select>
+                    </div>
+                    <button onclick="exportHistory()" class="ml-auto bg-green-600 text-white px-6 py-2 rounded-md text-xs font-bold hover:brightness-110 active:scale-95 transition-all uppercase tracking-widest flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">download</span> EXPORT DATA
+                    </button>
+                </div>
+            </div>
+
+            <div class="card overflow-hidden dark:bg-slate-900 dark:border-slate-800 transition-colors">
+                <div class="overflow-x-auto">
+                    <table id="historyTable" class="w-full text-left text-xs">
+                        <thead class="bg-slate-100/50 dark:bg-slate-800/30 uppercase text-[9px] font-black tracking-widest text-slate-500 border-b dark:border-slate-800">
+                            <tr>
+                                <th class="px-6 py-4">ID TRANSAKSI</th>
+                                <th class="px-6 py-4">TANGGAL</th>
+                                <th class="px-6 py-4">PENERIMA</th>
+                                <th class="px-6 py-4">MAHASISWA</th>
+                                <th class="px-6 py-4">KODE MODUL</th>
+                                <th class="px-6 py-4 text-center">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody" class="divide-y divide-slate-50 dark:divide-slate-800">
+                            <!-- Items injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] transform transition-all duration-300 translate-y-20 opacity-0 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3">
+        <span class="material-symbols-outlined text-secondary">info</span>
+        <span id="toast-message" class="text-xs font-bold tracking-tight"></span>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        function setupHistoriUI() {
+            if (UT_Utils.userRole !== 'Admin') {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const utOrders = JSON.parse(localStorage.getItem('ut_orders') || '[]');
+            const tbody = document.getElementById('historyTableBody');
+            const search = document.getElementById('histSearch')?.value.toLowerCase() || '';
+            const filterStat = document.getElementById('histStatusFilter')?.value || '';
+            
+            if(!tbody) return;
+
+            const filtered = utOrders.filter(o => {
+                const matchesSearch = o.doNum.toLowerCase().includes(search) || (o.studentName || '').toLowerCase().includes(search);
+                const matchesStat = filterStat === "" || o.status === filterStat;
+                return matchesSearch && matchesStat;
+            });
+
+            tbody.innerHTML = filtered.length ? filtered.reverse().map(item => {
+                const statusColor = { 'Confirmed': 'bg-blue-50 text-blue-600', 'In Transit': 'bg-indigo-50 text-indigo-600', 'Delivered': 'bg-green-50 text-green-600', 'Finished': 'bg-slate-100 text-slate-700', 'Rejected': 'bg-red-50 text-red-600' }[item.status] || 'bg-slate-50 text-slate-500';
+                return `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <td class="px-6 py-4 font-mono font-bold text-primary dark:text-blue-400">${item.doNum}</td>
+                        <td class="px-6 py-4 dark:text-slate-400">${new Date(item.date).toLocaleDateString()}</td>
+                        <td class="px-6 py-4 font-medium dark:text-slate-300">${item.address || 'Gudang Pusat'}</td>
+                        <td class="px-6 py-4 font-bold dark:text-white uppercase">${item.studentName}</td>
+                        <td class="px-6 py-4 font-mono text-[10px] dark:text-slate-400">${item.moduleCode}</td>
+                        <td class="px-6 py-4 text-center"><span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-tighter ${statusColor}">${item.status}</span></td>
+                    </tr>`;
+            }).join('') : '<tr><td colspan="6" class="p-10 text-center text-slate-400 italic">Tidak ada data histori.</td></tr>';
+        }
+
+        function exportHistory() { UT_Utils.showNotification('Menyiapkan file download...'); }
+
+        window.addEventListener('DOMContentLoaded', setupHistoriUI);
+    </script>
+</body>
+</html>
